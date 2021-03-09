@@ -3,7 +3,7 @@ const resolve = dir => {
   return path.join(__dirname, dir)
 }
 module.exports = {
-  publicPath: '/index',
+  publicPath: '/',
   // outputDir: 'dist',
   outputDir: 'docker/ui/index',
   assetsDir: 'static',
@@ -13,6 +13,7 @@ module.exports = {
     config.resolve.alias
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
+      .set('_a', resolve('src/assets'))
 
     // set svg-sprite-loader
     config.module

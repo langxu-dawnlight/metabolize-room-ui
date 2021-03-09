@@ -34,14 +34,14 @@ axios.interceptors.response.use(
         case 401:
         case 403:
         case 493:
-        case 491:·
+        case 491:
           window.location.href = LOGIN_URL
 
           break
         default:
-          var msg =·
+          var msg =
             (error.response.data && error.response.data.message) || 'Error'
-          Message.error(msg)·
+          Message.error(msg)
           return Promise.reject(error)
       }
     } else {

@@ -21,9 +21,9 @@ export const LOGOUT_URL = `${window.location.protocol}//${window.location.host}/
 // base url
 export const API_BASE_URL = conf({
   // dev: 'http://192.168.10.95:8080', // zuo
-  // dev: 'http://192.168.10.86:8080',
-  dev: 'http://139.196.15.28:8084',
-  sit: 'http://139.196.15.28:8084',
+  dev: 'http://192.168.99.120:8080', // liao
+  dev: 'http://cdss.svc.aws.wenjingtech.com:8071', // liao
+  sit: 'http://cdss.svc.aws.wenjingtech.com:8071',
   // sit: 'http://wwww.wenjing-test.com',
   prod: dynamicConfig.VUE_APP_ANNO_API || '/'
 })

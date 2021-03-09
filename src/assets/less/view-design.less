@@ -1,1 +1,50 @@
 @import '~view-design/src/styles/index.less';
+
+.metabolizeModal {
+  .ivu-modal-header {
+    border-bottom: 0;
+  }
+  .ivu-modal-footer {
+    border-top: 0;
+    .footer {
+      display: flex;
+      justify-content: center;
+      button {
+        min-width: 130px;
+        margin: 0 10px;
+      }
+      .confirm {
+        background: rgba(76, 132, 255, 0.1);
+        border: 1px solid #4c84ff;
+        box-sizing: border-box;
+        border-radius: 4px;
+        color: #4c84ff;
+      }
+      .cancel {
+        background: #414b70;
+        color: #959eba;
+        border: 0;
+      }
+    }
+  }
+  .ivu-modal-content {
+    background-color: #303e62;
+  }
+
+  .ivu-form-item-label,
+  .ivu-modal-header-inner {
+    color: #ffffff;
+  }
+  .ivu-input {
+    background-color: #202947;
+    border: 0;
+    color: #ffffff;
+  }
+  .ivu-input-word-count {
+    background: transparent;
+  }
+}
+
+.ivu-spin-fix {
+  background-color: rgba(0, 0, 0, 0.3);
+}
