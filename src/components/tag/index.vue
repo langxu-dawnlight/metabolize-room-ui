@@ -57,7 +57,7 @@ export default {
   overflow: hidden;
   .header {
     position: relative;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid #303e62;
     padding-right: 50px;
     padding-bottom: 10px;
     color: #ffffff;

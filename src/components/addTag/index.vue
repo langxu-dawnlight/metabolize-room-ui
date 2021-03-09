@@ -46,6 +46,8 @@
 
 <script>
 import { addTags, updateTag, deleteTag } from '@/api/common'
+import eventBus from '@/views/home/eventBus.js'
+
 export default {
   props: ['readerId'],
   data() {
@@ -114,6 +116,7 @@ export default {
         objectName: this.readerForm.objectName
       }).then(res => {
         if (res) {
+          eventBus.$emit('roomUpdate')
           this.$emit('onSuccess')
         }
       })

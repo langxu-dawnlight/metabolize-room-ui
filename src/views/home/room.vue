@@ -506,6 +506,7 @@ export default {
       .addItem {
         width: 100%;
         height: 100%;
+        min-height: 151px;
         background: #202947;
         padding: 15px;
         border-radius: 5px;

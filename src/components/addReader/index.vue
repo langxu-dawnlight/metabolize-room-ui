@@ -37,6 +37,8 @@
 
 <script>
 import { addReaders, updateReader, deleteReader } from '@/api/common'
+import eventBus from '@/views/home/eventBus.js'
+
 export default {
   props: ['roomId'],
   data() {
@@ -80,6 +82,7 @@ export default {
         id: id
       }).then(() => {
         this.$emit('onDelete')
+        eventBus.$emit('roomUpdate')
       })
     },
     confirm() {
