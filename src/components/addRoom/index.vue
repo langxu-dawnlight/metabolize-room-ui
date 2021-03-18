@@ -95,8 +95,6 @@ export default {
           } else {
             this.__addRooms()
           }
-
-          this.visable = false
         }
       })
     },
@@ -106,8 +104,13 @@ export default {
         roomName: this.readerForm.roomName,
         roomDescription: this.readerForm.roomDescription
       }).then(res => {
+        if (res == -1) {
+          this.$Message.info('名称已存在,请重新输入')
+          return false
+        }
         this.$emit('onSuccess')
         eventBus.$emit('roomUpdate')
+        this.visable = false
       })
     },
     __addRooms() {
@@ -116,6 +119,11 @@ export default {
         roomDescription: this.readerForm.roomDescription,
         roomName: this.readerForm.roomName
       }).then(res => {
+        if (res == -1) {
+          this.$Message.info('名称已存在,请重新输入')
+          return false
+        }
+        this.visable = false
         this.$emit('onSuccess')
       })
     }

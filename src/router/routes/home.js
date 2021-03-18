@@ -8,7 +8,7 @@ const routes = [
           path: 'room/:id',
           component: () => import('@/views/home/room'),
           meta: { title: 'room' },
-        },
+        }
        
       ]
     }

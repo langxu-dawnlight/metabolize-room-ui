@@ -93,8 +93,6 @@ export default {
           } else {
             this.__addReaders()
           }
-
-          this.visable = false
         }
       })
     },
@@ -105,6 +103,7 @@ export default {
         readerName: this.readerForm.readerName,
         roomId: this.roomId
       }).then(res => {
+        this.visable = false
         this.$emit('onSuccess')
       })
     },
@@ -114,6 +113,11 @@ export default {
         readerName: this.readerForm.readerName,
         roomId: this.roomId
       }).then(res => {
+        if (res == -1) {
+          this.$Message.info('Id已存在,请重新输入')
+          return false
+        }
+        this.visable = false
         this.$emit('onSuccess')
       })
     }

@@ -79,3 +79,16 @@ get(`${API_BASE_URL}/tag/reader`, param)
 
 export const updateTag = param =>
 post(`${API_BASE_URL}/tag/update`, param)
+
+// beacon
+export const getBeaconsByGateway = param =>
+get(`${API_BASE_URL}/beacon/antenna`, param)
+
+export const addBeacon = param =>
+post(`${API_BASE_URL}/beacon/add`, param)
+
+export const deleteBeacon = param =>
+post(`${API_BASE_URL}/beacon/delete`, param)
+
+export const updateBeacon = param =>
+post(`${API_BASE_URL}/beacon/update`, param)

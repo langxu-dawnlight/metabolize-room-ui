@@ -21,7 +21,7 @@
               >添加Reader</DropdownItem
             >
             <DropdownItem
-              v-if="!getewayInfo.id"
+              v-if="!gatewayInfo.id"
               @click.native="$refs.addGateway.show()"
               >添加Geteway</DropdownItem
             >
@@ -33,26 +33,21 @@
       </div>
     </div>
     <div class="room-content" v-if="roomInfo.id">
-      <!-- <div class="reader" v-if="readerInfo.id">
-        <span class="text">Reader序列号：{{ readerInfo.readerNumber }}</span>
-        <span class="text">Reader名称：{{ readerInfo.readerName }}</span>
-        <span class="status">可用</span>
-      </div> -->
       <div class="content">
-        <Card :bordered="false" class="antenna" v-if="getewayInfo.id">
+        <Card :bordered="false" class="antenna" v-if="gatewayInfo.id">
           <div slot="title" class="title">
-            <p>Geteway - {{ getewayInfo.gatewayName }}</p>
+            <p>Geteway - {{ gatewayInfo.gatewayName }}</p>
             <div class="readerId">
-              ID：{{ getewayInfo.gatewayNumber }}
+              ID：{{ gatewayInfo.gatewayNumber }}
 
               <img
-                v-if="getewayInfo.status === 1"
+                v-if="gatewayInfo.status === 1"
                 class="statusImg"
                 src="../../assets/image/permit.png"
                 alt=""
               />
               <img
-                v-if="getewayInfo.status === 0"
+                v-if="gatewayInfo.status === 0"
                 class="statusImg"
                 src="../../assets/image/forbid.png"
                 alt=""
@@ -66,23 +61,23 @@
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem
-                    @click.native="$refs.addGateway.modify({ ...getewayInfo })"
+                    @click.native="$refs.addGateway.modify({ ...gatewayInfo })"
                     >编辑Geteway</DropdownItem
                   >
 
                   <DropdownItem
-                    v-if="getewayInfo.status === 0"
+                    v-if="gatewayInfo.status === 0"
                     @click.native="__permitGateway()"
                     >启用</DropdownItem
                   >
                   <DropdownItem
-                    v-if="getewayInfo.status === 1"
+                    v-if="gatewayInfo.status === 1"
                     @click.native="__forbidGateway()"
                     >禁用</DropdownItem
                   >
                   <DropdownItem
                     @click.native="
-                      $refs.addGateway.deleteGateway(getewayInfo.id)
+                      $refs.addGateway.deleteGateway(gatewayInfo.id)
                     "
                     >解绑</DropdownItem
                   >
@@ -90,7 +85,35 @@
               </Dropdown>
             </div>
           </div>
+          <Row :gutter="15" class="tag-list">
+            <template v-for="item in beaconList">
+              <Col span="8" :key="item.id"
+                ><beacon
+                  :key="item.id"
+                  :beaconInfo="item"
+                  @ondelete="$refs.addBeacon.deleteBeac(item.id)"
+                  @modify="
+                    $refs.addBeacon.modify({
+                      id: item.id,
+                      location: item.location,
+                      objectDescription: item.objectDescription,
+                      objectName: item.objectName,
+                      type: item.type
+                    })
+                  "
+                ></beacon
+              ></Col>
+            </template>
+            <Col span="8" v-if="gatewayInfo.id"
+              ><div class="addItem" @click="$refs.addBeacon.show()">
+                <Icon type="md-add" size="25" color="#555e7a" />
+                <span style="margin-top:5px">添加Beacon</span>
+              </div>
+            </Col>
+          </Row>
         </Card>
+
+        <!-- reader -->
         <Card :bordered="false" class="antenna" v-if="readerInfo.id">
           <div slot="title" class="title">
             <p>Reader - {{ readerInfo.readerName }}</p>
@@ -172,7 +195,7 @@
           </Row>
         </Card>
       </div>
-      <div class="create-reader" v-if="readerVisable && !getewayInfo.id">
+      <div class="create-reader" v-if="readerVisable && !gatewayInfo.id">
         <p>请点击创建</p>
         <div class="btn">
           <Button type="primary" @click="$refs.addReader.show()">
@@ -208,12 +231,20 @@
       @onDelete="onDelete"
       @onSuccess="__getRoomById"
     ></addRoom>
+    <addBeacon
+      ref="addBeacon"
+      :gatewayId="gatewayInfo.id"
+      @onDelete="__getBeaconsByGateway"
+      @onSuccess="__getBeaconsByGateway"
+    ></addBeacon>
   </div>
 </template>
 
 <script>
 import tag from '_c/tag'
+import beacon from '_c/beacon'
 import addTag from '_c/addTag'
+import addBeacon from '_c/addBeacon'
 import addReader from '_c/addReader'
 import addGateway from '_c/addGateway'
 import addRoom from '_c/addRoom'
@@ -226,10 +257,19 @@ import {
   forbidReader,
   permitReader,
   forbidGateway,
-  permitGateway
+  permitGateway,
+  getBeaconsByGateway
 } from '@/api/common'
 export default {
-  components: { tag, addReader, addTag, addGateway, addRoom },
+  components: {
+    tag,
+    addReader,
+    addTag,
+    addGateway,
+    addRoom,
+    beacon,
+    addBeacon
+  },
   data() {
     return {
       readerVisable: false,
@@ -239,7 +279,8 @@ export default {
         roomName: ''
       },
       tagList: [],
-      getewayInfo: {
+      beaconList: [],
+      gatewayInfo: {
         id: ''
       },
       readerInfo: {
@@ -269,7 +310,7 @@ export default {
       this.roomInfo = {}
       this.tagList = []
       this.readerInfo = {}
-      this.getewayInfo = {}
+      this.gatewayInfo = {}
       this.__getReaderByRoom()
       this.__getRoomById()
       this.__getGatewayByRoom()
@@ -292,7 +333,7 @@ export default {
     },
     __forbidGateway() {
       forbidGateway({
-        id: this.getewayInfo.id,
+        id: this.gatewayInfo.id,
         roomId: this.roomId
       }).then(() => {
         this.__getGatewayByRoom()
@@ -300,7 +341,7 @@ export default {
     },
     __permitGateway() {
       permitGateway({
-        id: this.getewayInfo.id,
+        id: this.gatewayInfo.id,
         roomId: this.roomId
       }).then(() => {
         this.__getGatewayByRoom()
@@ -326,8 +367,18 @@ export default {
       getGatewayByRoom({
         roomId: this.roomId
       }).then(res => {
-        this.getewayInfo = res
+        this.gatewayInfo = res
+        this.__getBeaconsByGateway()
       })
+    },
+    __getBeaconsByGateway() {
+      if (this.gatewayInfo.id) {
+        getBeaconsByGateway({
+          gatewayId: this.gatewayInfo.id
+        }).then(res => {
+          this.beaconList = res
+        })
+      }
     },
     __getReaderByRoom() {
       getReaderByRoom({

@@ -87,8 +87,6 @@ export default {
           } else {
             this.__onAddGateway()
           }
-
-          this.visable = false
         }
       })
     },
@@ -98,6 +96,11 @@ export default {
         gatewayName: this.readerForm.gatewayName,
         gatewayNumber: this.readerForm.gatewayNumber
       }).then(res => {
+        if (res == -1) {
+          this.$Message.info('Id已存在,请重新输入')
+          return false
+        }
+        this.visable = false
         this.$emit('onSuccess')
       })
     },
@@ -107,7 +110,12 @@ export default {
         gatewayName: this.readerForm.gatewayName,
         gatewayNumber: this.readerForm.gatewayNumber,
         id: this.readerForm.id
-      }).then(() => {
+      }).then(res => {
+        if (res == -1) {
+          this.$Message.info('Id已存在,请重新输入')
+          return false
+        }
+        this.visable = false
         this.$emit('onSuccess')
       })
     }

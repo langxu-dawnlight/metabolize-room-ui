@@ -4,12 +4,12 @@
       :mask-closable="false"
       class="metabolizeModal"
       v-model="visable"
-      :title="readerForm.id ? '编辑Tag' : '创建Tag'"
+      :title="readerForm.id ? '编辑Beacon' : '创建Beacon'"
     >
       <Form ref="readerForm" :model="readerForm" :rules="ruleValidate">
-        <FormItem label="Id" prop="tagRawId">
+        <FormItem label="Id" prop="objectName">
           <Input
-            v-model="readerForm.tagRawId"
+            v-model="readerForm.objectName"
             clearable
             placeholder="请输入Id"
             maxlength="20"
@@ -26,14 +26,20 @@
             show-word-limit
           ></Input>
         </FormItem>
-        <FormItem label="描述" prop="objectName">
+        <!-- <FormItem label="描述" prop="objectDescription">
           <Input
-            v-model="readerForm.objectName"
+            v-model="readerForm.objectDescription"
             clearable
             maxlength="20"
             show-word-limit
             placeholder="请输入描述"
           ></Input>
+        </FormItem> -->
+        <FormItem label="类型" prop="type">
+          <Select v-model="readerForm.type">
+            <Option value="wristband">wristband</Option>
+            <Option value="object">object</Option>
+          </Select>
         </FormItem>
       </Form>
       <div slot="footer" class="footer">
@@ -45,27 +51,31 @@
 </template>
 
 <script>
-import { addTags, updateTag, deleteTag } from '@/api/common'
+import { addBeacon, updateBeacon, deleteBeacon } from '@/api/common'
 import eventBus from '@/views/home/eventBus.js'
 
 export default {
-  props: ['readerId'],
+  props: ['gatewayId'],
   data() {
     return {
       visable: false,
       readerForm: {
-        tagRawId: '',
+        objectName: '',
         location: '',
-        objectName: ''
+        objectDescription: '',
+        type: ''
       },
       ruleValidate: {
-        tagRawId: [{ required: true, message: 'Id不能为空', trigger: 'blur' }],
+        objectName: [
+          { required: true, message: 'Id不能为空', trigger: 'blur' }
+        ],
         location: [
           { required: true, message: '位置不能为空', trigger: 'blur' }
         ],
-        objectName: [
-          { required: true, message: '描述不能为空', trigger: 'blur' }
-        ]
+        // objectDescription: [
+        //   { required: true, message: '描述不能为空', trigger: 'blur' }
+        // ],
+        type: [{ required: true, message: '类型不能为空', trigger: 'change' }]
       }
     }
   },
@@ -81,18 +91,18 @@ export default {
       this.visable = false
     },
     show() {
+      this.readerForm = {}
       this.readerForm.id = ''
       this.visable = true
     },
-    modify(readerInfo) {
-      this.readerForm = readerInfo
+    modify(beaconInfo) {
+      this.readerForm = beaconInfo
       this.visable = true
     },
-    deleteTag(id) {
-      deleteTag({
+    deleteBeac(id) {
+      deleteBeacon({
         id
       }).then(() => {
-        eventBus.$emit('roomUpdate')
         this.$emit('onDelete')
       })
     },
@@ -100,19 +110,20 @@ export default {
       this.$refs.readerForm.validate(valid => {
         if (valid) {
           if (this.readerForm.id) {
-            this.__updateTag()
+            this.__updateBeacon()
           } else {
-            this.__addTags()
+            this.__addBeacon()
           }
         }
       })
     },
-    __addTags() {
-      addTags({
-        readerId: this.readerId,
+    __addBeacon() {
+      addBeacon({
+        gatewayId: this.gatewayId,
         location: this.readerForm.location,
-        tagRawId: this.readerForm.tagRawId,
-        objectName: this.readerForm.objectName
+        objectDescription: this.readerForm.objectDescription,
+        objectName: this.readerForm.objectName,
+        type: this.readerForm.type
       }).then(res => {
         if (res == -1) {
           this.$Message.info('Id已存在')
@@ -120,21 +131,25 @@ export default {
         }
         this.visable = false
         if (res) {
-          eventBus.$emit('roomUpdate')
           this.$emit('onSuccess')
         }
       })
     },
-    __updateTag() {
-      updateTag({
-        readerId: this.readerId,
+    __updateBeacon() {
+      updateBeacon({
+        gatewayId: this.gatewayId,
         id: this.readerForm.id,
         location: this.readerForm.location,
-        tagRawId: this.readerForm.tagRawId,
+        objectDescription: this.readerForm.objectDescription,
+        type: this.readerForm.type,
         objectName: this.readerForm.objectName
       }).then(res => {
-        this.visable = false
-        this.$emit('onSuccess')
+        if (res === -1) {
+          this.$Message.info('Id已存在')
+        } else {
+          this.visable = false
+          this.$emit('onSuccess')
+        }
       })
     }
   }
