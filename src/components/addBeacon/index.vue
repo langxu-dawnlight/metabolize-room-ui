@@ -103,6 +103,7 @@ export default {
       deleteBeacon({
         id
       }).then(() => {
+        eventBus.$emit('roomUpdate')
         this.$emit('onDelete')
       })
     },
@@ -131,6 +132,7 @@ export default {
         }
         this.visable = false
         if (res) {
+          eventBus.$emit('roomUpdate')
           this.$emit('onSuccess')
         }
       })

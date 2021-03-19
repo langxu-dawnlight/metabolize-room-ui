@@ -309,6 +309,7 @@ export default {
       this.readerVisable = false
       this.roomInfo = {}
       this.tagList = []
+      this.beaconList = []
       this.readerInfo = {}
       this.gatewayInfo = {}
       this.__getReaderByRoom()
