@@ -23,7 +23,7 @@
         >
           <span class="name" :title="item.roomName">{{ item.roomName }}</span>
           <span class="tag-count"
-            >Device {{ item.tagCounts + item.beaconCounts }}</span
+            >Device {{ item.tagCounts + (item.beaconCounts || 0) }}</span
           >
         </li>
       </ul>

@@ -85,7 +85,7 @@
               </Dropdown>
             </div>
           </div>
-          <Row :gutter="15" class="tag-list">
+          <Row :gutter="15" class="tag-list" v-if="gatewayInfo.status === 1">
             <template v-for="item in beaconList">
               <Col span="8" :key="item.id"
                 ><beacon
@@ -168,7 +168,7 @@
               </Dropdown>
             </div>
           </div>
-          <Row :gutter="15" class="tag-list">
+          <Row :gutter="15" class="tag-list" v-if="readerInfo.status === 1">
             <template v-for="item in tagList">
               <Col span="8" :key="item.id"
                 ><tag
@@ -248,6 +248,7 @@ import addBeacon from '_c/addBeacon'
 import addReader from '_c/addReader'
 import addGateway from '_c/addGateway'
 import addRoom from '_c/addRoom'
+import eventBus from '@/views/home/eventBus.js'
 
 import {
   getRoomById,
@@ -330,6 +331,7 @@ export default {
         roomId: this.roomId
       }).then(() => {
         this.__getReaderByRoom()
+        eventBus.$emit('roomUpdate')
       })
     },
     __forbidGateway() {
@@ -338,6 +340,7 @@ export default {
         roomId: this.roomId
       }).then(() => {
         this.__getGatewayByRoom()
+        eventBus.$emit('roomUpdate')
       })
     },
     __permitGateway() {

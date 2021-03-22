@@ -36,6 +36,8 @@
 
 <script>
 import { addGateways, updateGateway, deleteGateway } from '@/api/common'
+import eventBus from '@/views/home/eventBus.js'
+
 export default {
   props: ['roomId'],
   data() {
@@ -77,6 +79,7 @@ export default {
     deleteGateway(id) {
       deleteGateway({ id }).then(() => {
         this.$emit('onSuccess')
+        eventBus.$emit('roomUpdate')
       })
     },
     confirm() {
