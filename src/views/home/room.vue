@@ -91,13 +91,14 @@
                 ><beacon
                   :key="item.id"
                   :beaconInfo="item"
+                  :isActive="activeDeviceIds.includes(item.objectRawId)"
                   @ondelete="$refs.addBeacon.deleteBeac(item.id)"
                   @modify="
                     $refs.addBeacon.modify({
                       id: item.id,
                       location: item.location,
                       objectDescription: item.objectDescription,
-                      objectName: item.objectName,
+                      objectRawId: item.objectRawId,
                       type: item.type
                     })
                   "
@@ -174,12 +175,13 @@
                 ><tag
                   :key="item.id"
                   :tagInfo="item"
+                  :isActive="activeDeviceIds.includes(item.tagRawId)"
                   @deleteTag="$refs.addTag.deleteTag(item.id)"
                   @modify="
                     $refs.addTag.modify({
                       id: item.id,
                       location: item.location,
-                      objectName: item.object,
+                      objectRawId: item.object,
                       tagRawId: item.tagRawId
                     })
                   "
@@ -259,7 +261,8 @@ import {
   permitReader,
   forbidGateway,
   permitGateway,
-  getBeaconsByGateway
+  getBeaconsByGateway,
+  getActiveDeviceIds
 } from '@/api/common'
 export default {
   components: {
@@ -289,21 +292,47 @@ export default {
         readerNumber: '',
         readerName: '',
         readerPower: ''
-      }
+      },
+      activeDeviceIds: [],
+      visibilityState: true
     }
   },
   computed: {
+    deviceIds() {
+      let tagRawIds = this.tagList.map(item => item.tagRawId)
+      let beaconIds = this.beaconList.map(item => item.objectRawId)
+      return [...tagRawIds, ...beaconIds]
+    },
     roomId() {
       return Number(this.$route.params.id) || ''
     }
   },
   watch: {
+    deviceIds() {
+      this.__getActiveDeviceIds()
+    },
     roomId() {
       this.init()
     }
   },
   created() {
     this.init()
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+  },
+  mounted() {
+    this.loopQuery()
+
+    document.addEventListener('visibilitychange', function() {
+      var isHidden = document.hidden
+      if (isHidden) {
+        this.visibilityState = false
+      } else {
+        this.visibilityState = true
+        this.loopQuery()
+      }
+    })
   },
   methods: {
     init() {
@@ -316,6 +345,28 @@ export default {
       this.__getReaderByRoom()
       this.__getRoomById()
       this.__getGatewayByRoom()
+    },
+    loopQuery() {
+      if (this.visibilityState) {
+        if (this.timer) clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          this.__getActiveDeviceIds()
+        }, 1500)
+      }
+    },
+    __getActiveDeviceIds() {
+      if (this.deviceIds.length > 0) {
+        getActiveDeviceIds({
+          deviceIds: this.deviceIds.join(',')
+        })
+          .then(res => {
+            this.activeDeviceIds = res
+            this.loopQuery()
+          })
+          .catch(() => {
+            clearTimeout(this.timer)
+          })
+      }
     },
     __permitReader() {
       permitReader({

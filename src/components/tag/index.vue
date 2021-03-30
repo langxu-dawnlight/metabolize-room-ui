@@ -26,14 +26,14 @@
       </div>
       <div class="item">
         <span class="name">状态: </span>
-        <!-- <span>
+        <span v-if="isActive">
           <em class="online"></em>
           已连接
         </span>
-        <span>
+        <span v-else>
           <em class="offline"></em>
           未连接
-        </span> -->
+        </span>
       </div>
     </div>
   </div>
@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  props: ['tagInfo'],
+  props: ['tagInfo', 'isActive'],
   data() {
     return {}
   }

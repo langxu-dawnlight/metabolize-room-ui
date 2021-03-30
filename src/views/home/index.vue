@@ -61,6 +61,9 @@ export default {
       this.__getAllRooms()
     })
   },
+  beforeDestroy() {
+    eventBus.$off('roomUpdate')
+  },
   computed: {
     activeRoomId() {
       return Number(this.$route.params.id) || ''

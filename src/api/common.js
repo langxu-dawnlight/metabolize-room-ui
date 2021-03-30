@@ -92,3 +92,7 @@ post(`${API_BASE_URL}/beacon/delete`, param)
 
 export const updateBeacon = param =>
 post(`${API_BASE_URL}/beacon/update`, param)
+
+// get avtive device id
+export const getActiveDeviceIds = param =>
+get(`${API_BASE_URL}/room/devices/connection`, param)

@@ -7,9 +7,9 @@
       :title="readerForm.id ? '编辑Beacon' : '创建Beacon'"
     >
       <Form ref="readerForm" :model="readerForm" :rules="ruleValidate">
-        <FormItem label="Id" prop="objectName">
+        <FormItem label="Id" prop="objectRawId">
           <Input
-            v-model="readerForm.objectName"
+            v-model="readerForm.objectRawId"
             clearable
             placeholder="请输入Id"
             maxlength="20"
@@ -60,13 +60,13 @@ export default {
     return {
       visable: false,
       readerForm: {
-        objectName: '',
+        objectRawId: '',
         location: '',
         objectDescription: '',
         type: ''
       },
       ruleValidate: {
-        objectName: [
+        objectRawId: [
           { required: true, message: 'Id不能为空', trigger: 'blur' }
         ],
         location: [
@@ -123,7 +123,7 @@ export default {
         gatewayId: this.gatewayId,
         location: this.readerForm.location,
         objectDescription: this.readerForm.objectDescription,
-        objectName: this.readerForm.objectName,
+        objectRawId: this.readerForm.objectRawId,
         type: this.readerForm.type
       }).then(res => {
         if (res == -1) {
@@ -144,7 +144,7 @@ export default {
         location: this.readerForm.location,
         objectDescription: this.readerForm.objectDescription,
         type: this.readerForm.type,
-        objectName: this.readerForm.objectName
+        objectRawId: this.readerForm.objectRawId
       }).then(res => {
         if (res === -1) {
           this.$Message.info('Id已存在')
